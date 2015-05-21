@@ -23,6 +23,15 @@ use Goetas\Xsd\XsdToPhp\Naming\NamingStrategy;
 class YamlConverter extends AbstractConverter
 {
 
+    private $classes = [];
+
+    private $xmlNamespaces = [];
+
+    public function setXmlNamespaces($namespaces)
+    {
+        $this->xmlNamespaces = $namespaces;
+    }
+
     public function __construct(NamingStrategy $namingStrategy){
 
         parent::__construct($namingStrategy);
@@ -40,8 +49,6 @@ class YamlConverter extends AbstractConverter
             return "DateTime<'Y-m-d'>";
         });
     }
-
-    private $classes = [];
 
     public function convert(array $schemas)
     {
@@ -149,6 +156,11 @@ class YamlConverter extends AbstractConverter
             if ($schema->getTargetNamespace()) {
                 $data["xml_root_namespace"] = $schema->getTargetNamespace();
             }
+
+            foreach ($this->xmlNamespaces as $xmlNs => $prefix) {
+                $data["xml_namespaces"][$prefix] = $xmlNs;
+            }
+
             $this->classes[spl_object_hash($element)]["class"] = &$class;
 
             if (! $element->getType()->getName()) {

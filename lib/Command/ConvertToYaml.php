@@ -3,7 +3,9 @@ namespace Goetas\Xsd\XsdToPhp\Command;
 
 use Goetas\Xsd\XsdToPhp\Jms\PathGenerator\Psr4PathGenerator;
 use Goetas\Xsd\XsdToPhp\Jms\YamlConverter;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Goetas\Xsd\XsdToPhp\AbstractConverter;
 use Goetas\Xsd\XsdToPhp\Naming\NamingStrategy;
@@ -20,6 +22,7 @@ class ConvertToYaml extends AbstractConvert
         parent::configure();
         $this->setName('convert:jms-yaml');
         $this->setDescription('Convert XSD definitions into YAML metadata for JMS Serializer');
+        $this->addOption('ns-xml', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, '');
     }
 
     protected function getConverterter(NamingStrategy $naming)
@@ -27,8 +30,16 @@ class ConvertToYaml extends AbstractConvert
         return new YamlConverter($naming);
     }
 
-    protected function convert(AbstractConverter $converter, array $schemas, array $targets, OutputInterface $output)
+    protected function convert(AbstractConverter $converter, array $schemas, array $targets, InputInterface $input, OutputInterface $output)
     {
+        $nsXml = $input->getOption('ns-xml');
+        $nsXmls = array();
+        foreach ($nsXml as $ns) {
+            list ($xmlNs, $prefix) = explode(";", $ns);
+            $nsXmls[$xmlNs] = $prefix;
+        }
+        $converter->setXmlNamespaces($nsXmls);
+
         $items = $converter->convert($schemas);
 
         $dumper = new Dumper();

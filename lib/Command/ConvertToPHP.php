@@ -5,6 +5,7 @@ use Goetas\Xsd\XsdToPhp\Php\PhpConverter;
 use Goetas\Xsd\XsdToPhp\Php\ClassGenerator;
 use Goetas\Xsd\XsdToPhp\Php\PathGenerator\Psr4PathGenerator;
 use Goetas\Xsd\XsdToPhp\AbstractConverter;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zend\Code\Generator\FileGenerator;
 use Goetas\Xsd\XsdToPhp\Naming\NamingStrategy;
@@ -28,7 +29,7 @@ class ConvertToPHP extends AbstractConvert
         return new PhpConverter($naming);
     }
 
-    protected function convert(AbstractConverter $converter, array $schemas, array $targets, OutputInterface $output)
+    protected function convert(AbstractConverter $converter, array $schemas, array $targets, InputInterface $input, OutputInterface $output)
     {
         $generator = new ClassGenerator();
         $pathGenerator = new Psr4PathGenerator($targets);

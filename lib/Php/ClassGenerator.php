@@ -357,10 +357,62 @@ class ClassGenerator
         $generator->addMethodFromGenerator($method);
     }
 
+    private function handleRemover(Generator\ClassGenerator $generator, PHPProperty $prop, PHPClass $class)
+    {
+        $type = $prop->getType();
+        $propName = $type->getArg()->getName();
+
+        $docblock = new DocBlockGenerator();
+        $docblock->setShortDescription("Removes a $propName");
+
+        if ($prop->getDoc()) {
+            $docblock->setLongDescription($prop->getDoc());
+        }
+
+        $return = new ReturnTag();
+        $return->setTypes("self");
+        $docblock->setTag($return);
+
+        $patramTag = new ParamTag($propName, $this->getPhpType($type->getArg()
+          ->getType()));
+        $docblock->setTag($patramTag);
+
+        $method = new MethodGenerator("remove".Inflector::classify($prop->getName()));
+
+        $parameter = new ParameterGenerator($propName);
+        $tt = $type->getArg()->getType();
+
+        if (! $this->isNativeType($tt)) {
+
+            if ($p = $this->isOneType($tt)) {
+                if (($t = $p->getType())) {
+                    $patramTag->setTypes($this->getPhpType($t));
+
+                    if (! $this->isNativeType($t)) {
+                        $parameter->setType($this->getPhpType($t));
+                    }
+                }
+            } elseif (! $this->isNativeType($tt)) {
+                $parameter->setType($this->getPhpType($tt));
+            }
+        }
+
+        $methodBody = "if ((\$key = array_search(\$$propName, \$this->{$prop->getname()}, TRUE)) !== FALSE) {" . PHP_EOL;
+        $methodBody .= "\tunset(\$this->" . $prop->getName() . "[\$key]);" . PHP_EOL;
+        $methodBody .= "}" . PHP_EOL;
+        $methodBody .= "return \$this;";
+        $method->setBody($methodBody);
+        $method->setDocBlock($docblock);
+        $method->setParameter($parameter);
+
+        $generator->addMethodFromGenerator($method);
+    }
+
     private function handleMethod(Generator\ClassGenerator $generator, PHPProperty $prop, PHPClass $class)
     {
         if ($prop->getType() instanceof PHPClassOf) {
             $this->handleAdder($generator, $prop, $class);
+            $this->handleRemover($generator, $prop, $class);
         }
 
         $this->handleGetter($generator, $prop, $class);

@@ -9,6 +9,7 @@ use Goetas\XML\XSDReader\SchemaReader;
 use Goetas\Xsd\XsdToPhp\AbstractConverter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputInterface;
 use Goetas\Xsd\XsdToPhp\Naming\ShortNamingStrategy;
 use Goetas\Xsd\XsdToPhp\Naming\LongNamingStrategy;
 use Goetas\Xsd\XsdToPhp\Naming\NamingStrategy;

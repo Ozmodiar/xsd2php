@@ -231,7 +231,7 @@ class PhpConverter extends AbstractConverter
                 return $class;
             }
             if (($this->isArrayType($type) || $this->isArrayNestedElement($type)) && !$force) {
-                $this->classes[spl_object_hash($type)]["skip"] = true;
+//                $this->classes[spl_object_hash($type)]["skip"] = true;
                 return $class;
             }
 
@@ -275,7 +275,8 @@ class PhpConverter extends AbstractConverter
             if ($element instanceof Group) {
                 $this->visitGroup($class, $schema, $element);
             } else {
-                $property = $this->visitElement($class, $schema, $element);
+                $arrayize = $element->getMax() == -1;
+                $property = $this->visitElement($class, $schema, $element, $arrayize);
                 $class->addProperty($property);
             }
         }

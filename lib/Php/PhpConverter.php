@@ -275,7 +275,7 @@ class PhpConverter extends AbstractConverter
             if ($element instanceof Group) {
                 $this->visitGroup($class, $schema, $element);
             } else {
-                $arrayize = $element->getMax() == -1;
+                $arrayize = $element->getMax() > 1 || $element->getMax() == -1;
                 $property = $this->visitElement($class, $schema, $element, $arrayize);
                 $class->addProperty($property);
             }

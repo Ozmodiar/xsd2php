@@ -229,7 +229,7 @@ class YamlConverter extends AbstractConverter
             }
 
             if (!$force && ($this->isArrayType($type) || $this->isArrayNestedElement($type))) {
-                $this->classes[spl_object_hash($type)]["skip"] = true;
+                //$this->classes[spl_object_hash($type)]["skip"] = true;
                 return $class;
             }
         }elseif ($force) {
@@ -267,7 +267,8 @@ class YamlConverter extends AbstractConverter
             $data["properties"] = array();
         }
         foreach ($this->flattElements($type) as $element) {
-            $data["properties"][Inflector::camelize($element->getName())] = $this->visitElement($class, $schema, $element);
+          $arrayize = $element->getMax() == -1;
+          $data["properties"][Inflector::camelize($element->getName())] = $this->visitElement($class, $schema, $element, $arrayize);
         }
     }
 

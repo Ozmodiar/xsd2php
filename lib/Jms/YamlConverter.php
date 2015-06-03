@@ -255,7 +255,7 @@ class YamlConverter extends AbstractConverter
             $data["properties"] = array();
         }
         foreach ($this->flattElements($type) as $element) {
-          $arrayize = $element->getMax() == -1;
+          $arrayize = $element->getMax() > 1 || $element->getMax() == -1;
           $data["properties"][Inflector::camelize($element->getName())] = $this->visitElement($class, $schema, $element, $arrayize);
         }
     }
